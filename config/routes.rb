@@ -4,10 +4,13 @@ require 'sidekiq/web'
 
 Rails.application.routes.draw do
   mount Sidekiq::Web => '/sidekiq'
-  resources :products
   get 'up' => 'rails/health#show', as: :rails_health_check
-
   root 'rails/health#show'
 
-  post '/cart', to: 'carts#create'
+  namespace :api do
+    namespace :v1 do
+      resource :carts, only: [:create]
+      resource :products
+    end
+  end
 end
