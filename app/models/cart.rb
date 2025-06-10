@@ -1,7 +1,19 @@
 # frozen_string_literal: true
 
+# app/models/cart.rb
 class Cart < ApplicationRecord
-  validates_numericality_of :total_price, greater_than_or_equal_to: 0
+  has_many :cart_items, dependent: :destroy
+  has_many :products, through: :cart_items
 
-  # TODO: lógica para marcar o carrinho como abandonado e remover se abandonado
+  def add_product(product_id, quantity)
+    item = cart_items.find_or_initialize_by(product_id: product_id)
+    item.quantity = item.quantity.to_i + quantity.to_i
+    item.save!
+    recalculate_total_price
+    item
+  end
+
+  def recalculate_total_price
+    update!(total_price: cart_items.sum(&:total_price))
+  end
 end
