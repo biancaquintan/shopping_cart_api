@@ -22,3 +22,7 @@ Layout/LineLength:
   Max: 120
   Exclude:
     - 'spec/**/*'
+
+# Exige comentário 'frozen_string_literal' em arquivos .rb 
+Style/FrozenStringLiteralComment:
+  Enabled: true
