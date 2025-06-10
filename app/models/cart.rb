@@ -7,8 +7,8 @@ class Cart < ApplicationRecord
 
   def add_product(product_id, quantity)
     item = cart_items.find_or_initialize_by(product_id: product_id)
-    item.quantity = item.quantity.to_i + quantity.to_i
-    item.save!
+    new_quantity = item.quantity.to_i + quantity.to_i
+    item.update!(quantity: new_quantity)
     recalculate_total_price
     item
   end
