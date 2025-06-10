@@ -1,0 +1,24 @@
+# .rubocop.yml
+
+AllCops:
+  NewCops: enable
+  Exclude:
+    - 'bin/*'
+    - 'db/schema.rb'
+
+# Ignora a exigência de comentários no topo das classes de migração
+Style/Documentation:
+  Enabled: false
+
+# Permite blocos mais longos em testes e migrações
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+    - 'db/migrate/**/*'
+    - 'Guardfile'
+
+# Permite linhas maiores nos testes
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - 'spec/**/*'
