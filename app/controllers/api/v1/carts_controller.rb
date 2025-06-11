@@ -6,7 +6,11 @@ module Api
     class CartsController < ApplicationController
       def create
         cart = current_cart
-        cart.add_product(params[:product_id], params[:quantity])
+        product_id = cart_params[:product_id]
+        quantity = cart_params[:quantity].to_i
+        quantity = 1 if quantity <= 0
+
+        cart.add_product(product_id, quantity)
 
         render json: Api::V1::CartSerializer.new(cart), status: :ok
       end
@@ -21,6 +25,10 @@ module Api
         cart = Cart.create!
         session[:cart_id] = cart.id
         cart
+      end
+
+      def cart_params
+        params.permit(:product_id, :quantity)
       end
     end
   end
