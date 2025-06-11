@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe CartItem, type: :model do
-  describe 'validations' do
+  describe 'when validating' do
     it 'is invalid without a cart' do
       cart_item = build(:cart_item, cart: nil)
       expect(cart_item).not_to be_valid

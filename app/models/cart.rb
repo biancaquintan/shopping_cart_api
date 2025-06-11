@@ -5,6 +5,8 @@ class Cart < ApplicationRecord
   has_many :cart_items, dependent: :destroy
   has_many :products, through: :cart_items
 
+  validates :total_price, numericality: { greater_than_or_equal_to: 0 }
+
   def add_product(product_id, quantity)
     item = cart_items.find_or_initialize_by(product_id: product_id)
     new_quantity = item.quantity.to_i + quantity.to_i
