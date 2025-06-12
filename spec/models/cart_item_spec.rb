@@ -24,18 +24,19 @@ RSpec.describe CartItem, type: :model do
   end
 
   describe '#unit_price' do
-    it 'returns the product price' do
-      product = build(:product, price: 15.0)
+    it 'returns the product price after validation' do
+      product = create(:product, price: 15.0)
       cart_item = build(:cart_item, product: product)
+      cart_item.valid?
 
       expect(cart_item.unit_price).to eq 15.0
     end
   end
 
   describe '#total_price' do
-    it 'returns unit price multiplied by quantity' do
-      product = build(:product, price: 20.0)
-      cart_item = build(:cart_item, product: product, quantity: 2)
+    it 'returns unit price multiplied by quantity after save' do
+      product = create(:product, price: 20.0)
+      cart_item = create(:cart_item, product: product, quantity: 2)
 
       expect(cart_item.total_price).to eq 40.0
     end

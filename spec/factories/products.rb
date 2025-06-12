@@ -3,6 +3,14 @@
 FactoryBot.define do
   factory :product do
     name { Faker::Commerce.product_name }
-    price { Faker::Commerce.price(range: 1.0..100.0) }
+    price { 10.0 }
+
+    trait :cheap do
+      price { Faker::Commerce.price(range: 5.0..50.0) }
+    end
+
+    trait :expensive do
+      price { Faker::Commerce.price(range: 100.0..999.0) }
+    end
   end
 end

@@ -5,5 +5,9 @@ FactoryBot.define do
     cart
     product
     quantity { rand(1..5) }
+
+    after(:create) do |item|
+      item.cart.recalculate_total_price
+    end
   end
 end
