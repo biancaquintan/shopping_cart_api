@@ -18,6 +18,10 @@ module Api
         handle_invalid_record(e)
       end
 
+      def show
+        render json: Api::V1::CartSerializer.new(current_cart), status: :ok
+      end
+
       private
 
       def handle_not_found(error)

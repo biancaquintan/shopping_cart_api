@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resource :carts, only: [:create]
+      resource :carts, only: %i[create show]
       resource :products
     end
   end
