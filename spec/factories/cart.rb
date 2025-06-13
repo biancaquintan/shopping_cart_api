@@ -3,6 +3,7 @@
 FactoryBot.define do
   factory :cart do
     total_price { 0.0 }
+    abandoned_at { nil }
 
     trait :with_items do
       transient do
@@ -13,6 +14,10 @@ FactoryBot.define do
         create_list(:cart_item, evaluator.items_count, cart: cart)
         cart.recalculate_total_price
       end
+    end
+
+    trait :abandoned do
+      abandoned_at { Time.current }
     end
   end
 end
