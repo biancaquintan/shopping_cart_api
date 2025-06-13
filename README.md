@@ -2,7 +2,7 @@
 
 Uma API RESTful desenvolvida em Ruby on Rails para gerenciamento de um carrinho de compras em um e-commerce.
 
-## Funcionalidades
+## ✨ Funcionalidades
 
 * Adicionar produtos ao carrinho
 * Atualizar a quantidade de produtos
@@ -11,7 +11,7 @@ Uma API RESTful desenvolvida em Ruby on Rails para gerenciamento de um carrinho 
 * Marcar como abandonado carrinhos inativos
 * Remover carrinhos abandonados
 
-## Endpoints Principais
+## 📚 Endpoints Principais
 
 ### 1. Criar ou adicionar produto ao carrinho
 
@@ -138,7 +138,7 @@ bundle exec rake carts:mark_and_cleanup_abandoned
 
 ---
 
-## Instalação e Execução
+## ⚙️ Instalação e Execução
 
 ### Informações Técnicas
 
@@ -149,9 +149,28 @@ bundle exec rake carts:mark_and_cleanup_abandoned
 * PostgreSQL 16
 * Redis 7.0.15
 
-### Como executar o projeto
+---
 
-## Executando a app sem o docker
+## 🔐 Configuração de variáveis de ambiente
+
+Este projeto utiliza um arquivo `.env` para armazenar configurações sensíveis.  
+Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
+
+```env
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+POSTGRES_HOST=
+POSTGRES_PORT=
+DEVELOP_DATABASE_URL=
+TEST_DATABASE_URL=
+PROD_DATABASE_URL=
+VERBOSE_TEST_LOGS=
+
+```
+---
+
+## Como executar o projeto
+
 Dado que todas as as ferramentas estão instaladas e configuradas:
 
 Instalar as dependências do:
