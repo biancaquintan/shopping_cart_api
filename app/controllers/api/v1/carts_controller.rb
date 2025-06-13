@@ -4,14 +4,17 @@
 module Api
   module V1
     class CartsController < ApplicationController
+      # GET api/v1/carts
       def create
         ensure_cart_and_add_item
       end
 
+      # POST api/v1/carts/add_item
       def add_item
         ensure_cart_and_add_item
       end
 
+      # DELETE api/v1/carts/:product_id
       def remove_item
         product = find_product
 
@@ -28,6 +31,7 @@ module Api
         handle_invalid_record(e)
       end
 
+      # GET api/v1/carts
       def show
         render json: Api::V1::CartSerializer.new(current_cart), status: :ok
       end

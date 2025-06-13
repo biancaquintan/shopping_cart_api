@@ -14,7 +14,7 @@ Rails.application.routes.draw do
         delete ':product_id', to: 'carts#remove_item', on: :collection
       end
 
-      resource :products
+      resources :products
     end
   end
 end
