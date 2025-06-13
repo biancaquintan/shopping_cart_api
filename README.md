@@ -1,108 +1,68 @@
-# Desafio técnico e-commerce
+# Carrinho de Compras Online - API REST
 
-## Nossas expectativas
+Uma API RESTful desenvolvida em Ruby on Rails para gerenciamento de um carrinho de compras em um e-commerce.
 
-A equipe de engenharia da RD Station tem alguns princípios nos quais baseamos nosso trabalho diário. Um deles é: projete seu código para ser mais fácil de entender, não mais fácil de escrever.
+## Funcionalidades
 
-Portanto, para nós, é mais importante um código de fácil leitura do que um que utilize recursos complexos e/ou desnecessários.
+* Adicionar produtos ao carrinho
+* Atualizar a quantidade de produtos
+* Remover produtos do carrinho
+* Visualizar itens do carrinho
+* Marcar como abandonado carrinhos inativos
+* Remover carrinhos abandonados
 
-O que gostaríamos de ver:
+## Endpoints Principais
 
-- O código deve ser fácil de ler. Clean Code pode te ajudar.
-- Notas gerais e informações sobre a versão da linguagem e outras informações importantes para executar seu código.
-- Código que se preocupa com a performance (complexidade de algoritmo).
-- O seu código deve cobrir todos os casos de uso presentes no README, mesmo que não haja um teste implementado para tal.
-- A adição de novos testes é sempre bem-vinda.
-- Você deve enviar para nós o link do repositório público com a aplicação desenvolvida (GitHub, BitBucket, etc.).
+### 1. Criar ou adicionar produto ao carrinho
 
-## O Desafio - Carrinho de compras
-O desafio consiste em uma API para gerenciamento do um carrinho de compras de e-commerce.
+**POST** `/api/v1/carts`
 
-Você deve desenvolver utilizando a linguagem Ruby e framework Rails, uma API Rest que terá 3 endpoins que deverão implementar as seguintes funcionalidades:
+Se não existir um carrinho, cria um e adiciona o produto.
 
-### 1. Registrar um produto no carrinho
-Criar um endpoint para inserção de produtos no carrinho.
+#### Payload:
 
-Se não existir um carrinho para a sessão, criar o carrinho e salvar o ID do carrinho na sessão.
-
-Adicionar o produto no carrinho e devolver o payload com a lista de produtos do carrinho atual.
-
-
-ROTA: `/cart`
-Payload:
-```js
+```json
 {
-  "product_id": 345, // id do produto sendo adicionado
-  "quantity": 2, // quantidade de produto a ser adicionado
+  "product_id": 345,
+  "quantity": 2
 }
 ```
 
-Response
-```js
+#### Resposta:
+
+```json
 {
-  "id": 789, // id do carrinho
+  "id": 789,
   "products": [
     {
       "id": 645,
       "name": "Nome do produto",
       "quantity": 2,
-      "unit_price": 1.99, // valor unitário do produto
-      "total_price": 3.98, // valor total do produto
-    },
-    {
-      "id": 646,
-      "name": "Nome do produto 2",
-      "quantity": 2,
       "unit_price": 1.99,
-      "total_price": 3.98,
-    },
+      "total_price": 3.98
+    }
   ],
-  "total_price": 7.96 // valor total no carrinho
+  "total_price": 3.98
 }
 ```
 
-### 2. Listar itens do carrinho atual
-Criar um endpoint para listar os produtos no carrinho atual.
+### 2. Atualizar a quantidade de um produto no carrinho
 
-ROTA: `/cart`
+**POST** `/api/v1/carts/add_item`
 
-Response:
-```js
-{
-  "id": 789, // id do carrinho
-  "products": [
-    {
-      "id": 645,
-      "name": "Nome do produto",
-      "quantity": 2,
-      "unit_price": 1.99, // valor unitário do produto
-      "total_price": 3.98, // valor total do produto
-    },
-    {
-      "id": 646,
-      "name": "Nome do produto 2",
-      "quantity": 2,
-      "unit_price": 1.99,
-      "total_price": 3.98,
-    },
-  ],
-  "total_price": 7.96 // valor total no carrinho
-}
-```
+Se o produto já existir no carrinho, apenas incrementa a quantidade.
 
-### 3. Alterar a quantidade de produtos no carrinho 
-Um carrinho pode ter _N_ produtos, se o produto já existir no carrinho, apenas a quantidade dele deve ser alterada
+#### Payload:
 
-ROTA: `/cart/add_item`
-
-Payload
 ```json
 {
   "product_id": 1230,
   "quantity": 1
 }
 ```
-Response:
+
+#### Resposta:
+
 ```json
 {
   "id": 1,
@@ -110,84 +70,84 @@ Response:
     {
       "id": 1230,
       "name": "Nome do produto X",
-      "quantity": 2, // considerando que esse produto já estava no carrinho
-      "unit_price": 7.00, 
-      "total_price": 14.00, 
-    },
-    {
-      "id": 01020,
-      "name": "Nome do produto Y",
-      "quantity": 1,
-      "unit_price": 9.90, 
-      "total_price": 9.90, 
-    },
+      "quantity": 2,
+      "unit_price": 7.00,
+      "total_price": 14.00
+    }
   ],
-  "total_price": 23.9
+  "total_price": 14.00
 }
 ```
 
-### 3. Remover um produto do carrinho 
+### 3. Remover produto do carrinho
 
-Criar um endpoint para excluir um produto do do carrinho. 
+**DELETE** `/api/v1/carts/:product_id`
 
-ROTA: `/cart/:product_id`
+#### Resposta (carrinho atualizado):
 
+```json
+{
+  "id": 1,
+  "products": [],
+  "total_price": 0.0
+}
+```
 
-#### Detalhes adicionais:
+### 4. Visualizar o carrinho atual
 
-- Verifique se o produto existe no carrinho antes de tentar removê-lo.
-- Se o produto não estiver no carrinho, retorne uma mensagem de erro apropriada.
-- Após remover o produto, retorne o payload com a lista atualizada de produtos no carrinho.
-- Certifique-se de que o endpoint lida corretamente com casos em que o carrinho está vazio após a remoção do produto.
+**GET** `/api/v1/carts`
 
-### 5. Excluir carrinhos abandonados
-Um carrinho é considerado abandonado quando estiver sem interação (adição ou remoção de produtos) há mais de 3 horas.
+#### Resposta:
 
-- Quando este cenário ocorrer, o carrinho deve ser marcado como abandonado.
-- Se o carrinho estiver abandonado há mais de 7 dias, remover o carrinho.
-- Utilize um Job para gerenciar (marcar como abandonado e remover) carrinhos sem interação.
-- Configure a aplicação para executar este Job nos períodos especificados acima.
+```json
+{
+  "id": 789,
+  "products": [
+    {
+      "id": 645,
+      "name": "Produto X",
+      "quantity": 2,
+      "unit_price": 5.0,
+      "total_price": 10.0
+    }
+  ],
+  "total_price": 10.0
+}
+```
 
-### Detalhes adicionais:
-- O Job deve ser executado regularmente para verificar e marcar carrinhos como abandonados após 3 horas de inatividade.
-- O Job também deve verificar periodicamente e excluir carrinhos que foram marcados como abandonados por mais de 7 dias.
+### 5. Gerenciamento de carrinhos abandonados
 
-### Como resolver
+Carrinhos sem interação há mais de **3 horas** são marcados com `abandoned_at`, e carrinhos com `abandoned_at <= 7 dias atrás` são excluídos.
 
-#### Implementação
-Você deve usar como base o código disponível nesse repositório e expandi-lo para que atenda as funcionalidade descritas acima.
+#### Implementação:
 
-Há trechos parcialmente implementados e também sugestões de locais para algumas das funcionalidades sinalizados com um `# TODO`. Você pode segui-los ou fazer da maneira que julgar ser a melhor a ser feita, desde que atenda os contratos de API e funcionalidades descritas.
+O job `MarkCartAsAbandonedJob` roda automaticamente com Sidekiq, conforme definido no `sidekiq.yml`:
 
-#### Testes
-Existem testes pendentes, eles estão marcados como <span style="color:green;">Pending</span>, e devem ser implementados para garantir a cobertura dos trechos de código implementados por você.
-Alguns testes já estão passando e outros estão com erro. Com a sua implementação os testes com erro devem passar a funcionar. 
-A adição de novos testes é sempre bem-vinda, mas sem alterar os já implementados.
+```yaml
+:schedule:
+  mark_cart_as_abandoned_job:
+    cron: '0 * * * *' # a cada hora
+    class: 'MarkCartAsAbandonedJob'
+```
 
+Também é possível executar manualmente através da rake task:
 
-### O que esperamos
-- Implementação dos testes faltantes e de novos testes para os métodos/serviços/entidades criados
-- Construção das 4 rotas solicitadas
-- Implementação de um job para controle dos carrinhos abandonados
+```bash
+bundle exec rake carts:mark_and_cleanup_abandoned
+```
 
+---
 
-### Itens adicionais / Legais de ter
-- Utilização de factory na construção dos testes
-- Desenvolvimento do docker-compose / dockerização da app
+## Instalação e Execução
 
-A aplicação já possui um Dockerfile, que define como a aplicação deve ser configurada dentro de um contêiner Docker. No entanto, para completar a dockerização da aplicação, é necessário criar um arquivo `docker-compose.yml`. O arquivo irá definir como os vários serviços da aplicação (por exemplo, aplicação web, banco de dados, etc.) interagem e se comunicam.
+### Informações Técnicas
 
-- Adicione tratamento de erros para situações excepcionais válidas, por exemplo: garantir que um produto não possa ter quantidade negativa. 
+**Dependências:**
 
-- Se desejar você pode adicionar a configuração faltante no arquivo `docker-compose.yml` e garantir que a aplicação rode de forma correta utilizando Docker. 
-
-## Informações técnicas
-
-### Dependências
-- ruby 3.3.1
-- rails 7.1.3.2
-- postgres 16
-- redis 7.0.15
+* Ruby 3.3.1
+* Rails 7.1.3.2
+* PostgreSQL 16
+* Redis 7.0.15
 
 ### Como executar o projeto
 
@@ -214,5 +174,3 @@ Executar os testes:
 bundle exec rspec
 ```
 
-### Como enviar seu projeto
-Salve seu código em um versionador de código (GitHub, GitLab, Bitbucket) e nos envie o link publico. Se achar necessário, informe no README as instruções para execução ou qualquer outra informação relevante para correção/entendimento da sua solução.
