@@ -72,14 +72,41 @@ RSpec.describe '/carts', type: :request do
     let(:product) { Product.create(name: 'Test Product', price: 10.0) }
     let!(:cart_item) { CartItem.create(cart: cart, product: product, quantity: 1) }
 
+    before do
+      inject_cart_into_controller(cart)
+    end
+
     context 'when the product already is in the cart' do
       subject do
-        post '/cart/add_items', params: { product_id: product.id, quantity: 1 }, as: :json
-        post '/cart/add_items', params: { product_id: product.id, quantity: 1 }, as: :json
+        post '/api/v1/carts/add_item', params: { product_id: product.id, quantity: 1 }, as: :json
+        post '/api/v1/carts/add_item', params: { product_id: product.id, quantity: 1 }, as: :json
       end
 
       it 'updates the quantity of the existing item in the cart' do
         expect { subject }.to change { cart_item.reload.quantity }.by(2)
+      end
+    end
+
+    context 'when the product is not yet in the cart' do
+      let(:new_product) { create(:product, :cheap) }
+
+      it 'adds the new product to the cart' do
+        expect do
+          post '/api/v1/carts/add_item', params: { product_id: new_product.id, quantity: 1 }, as: :json
+        end.to change { cart.reload.cart_items.count }.by(1)
+
+        json = JSON.parse(response.body)
+        expect(json['products'].any? { |p| p['id'] == new_product.id }).to be true
+      end
+    end
+
+    context 'when the product does not exist' do
+      it 'returns not found error' do
+        post '/api/v1/carts/add_item', params: { product_id: -1, quantity: 1 }, as: :json
+
+        expect(response).to have_http_status(:not_found)
+        json = JSON.parse(response.body)
+        expect(json['error']).to be_present
       end
     end
   end

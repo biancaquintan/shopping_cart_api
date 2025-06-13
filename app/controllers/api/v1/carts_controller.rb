@@ -5,6 +5,20 @@ module Api
   module V1
     class CartsController < ApplicationController
       def create
+        ensure_cart_and_add_item
+      end
+
+      def add_item
+        ensure_cart_and_add_item
+      end
+
+      def show
+        render json: Api::V1::CartSerializer.new(current_cart), status: :ok
+      end
+
+      private
+
+      def ensure_cart_and_add_item
         product = Product.find_by!(id: cart_params[:product_id])
         quantity = normalized_quantity(cart_params[:quantity])
 
@@ -17,12 +31,6 @@ module Api
       rescue ActiveRecord::RecordInvalid => e
         handle_invalid_record(e)
       end
-
-      def show
-        render json: Api::V1::CartSerializer.new(current_cart), status: :ok
-      end
-
-      private
 
       def handle_not_found(error)
         render json: { error: error.message }, status: :not_found

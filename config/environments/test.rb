@@ -55,17 +55,16 @@ Rails.application.configure do
   # Tell Active Support which deprecation messages to disallow.
   config.active_support.disallowed_deprecation_warnings = []
 
-  
   # Show STDOUT logs (console)
-  
-  if ENV['VERBOSE_TEST_LOGS'] == 'true'
-    config.logger = Logger.new(STDOUT)
-  else
-    config.logger = Logger.new(nil) # silencia os logs
-  end
-  
+
+  config.logger = if ENV['VERBOSE_TEST_LOGS'] == 'true'
+                    Logger.new($stdout)
+                  else
+                    Logger.new(nil) # silencia os logs
+                  end
+
   config.log_level = :debug
-  
+
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
 
