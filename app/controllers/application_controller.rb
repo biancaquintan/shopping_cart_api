@@ -6,6 +6,7 @@ class ApplicationController < ActionController::API
   private
 
   def render_not_found(exception)
-    render json: { error: exception.message }, status: :not_found
+    message = exception.respond_to?(:message) ? exception.message : exception.to_s
+    render json: { error: message }, status: :not_found
   end
 end

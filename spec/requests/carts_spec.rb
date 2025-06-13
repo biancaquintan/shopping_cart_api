@@ -6,7 +6,7 @@ RSpec.describe '/carts', type: :request do
   describe 'POST /api/v1/carts' do
     let!(:product) { create(:product, price: 10.0) }
 
-    context 'when the cart does not yet exist in the session' do
+    context 'when the cart doesnt yet exist in the session' do
       it 'creates cart and adds product' do
         post '/api/v1/carts', params: { product_id: product.id, quantity: 2 }, as: :json
 
@@ -100,13 +100,59 @@ RSpec.describe '/carts', type: :request do
       end
     end
 
-    context 'when the product does not exist' do
+    context 'when the product doesnt exist' do
       it 'returns not found error' do
         post '/api/v1/carts/add_item', params: { product_id: -1, quantity: 1 }, as: :json
 
         expect(response).to have_http_status(:not_found)
         json = JSON.parse(response.body)
         expect(json['error']).to be_present
+      end
+    end
+  end
+
+  describe 'DELETE /api/v1/carts/:product_id' do
+    let(:product) { create(:product, price: 15.0) }
+    let(:other_product) { create(:product, price: 20.0) }
+    let!(:cart) { Cart.create!.tap { |c| c.add_product(product.id, 2) } }
+
+    before do
+      inject_cart_into_controller(cart)
+    end
+
+    context 'when the product is in the cart' do
+      it 'removes the product and updates total price' do
+        expect do
+          delete "/api/v1/carts/#{product.id}", as: :json
+        end.to change { cart.reload.cart_items.count }.by(-1)
+
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body)
+        expect(json['products']).to be_empty
+        expect(json['total_price'].to_f).to eq(0.0)
+      end
+    end
+
+    context 'when the product is not in the cart' do
+      it 'returns not found error' do
+        delete "/api/v1/carts/#{other_product.id}", as: :json
+
+        expect(response).to have_http_status(:not_found)
+
+        json = JSON.parse(response.body)
+        expect(json['error']).to match(/Product not found in cart/)
+      end
+    end
+
+    context 'when the product doesnt exist at all' do
+      it 'returns not found error' do
+        delete '/api/v1/carts/999999', as: :json
+
+        expect(response).to have_http_status(:not_found)
+
+        json = JSON.parse(response.body)
+        expect(json['error']).to match(/Couldn't find Product/)
       end
     end
   end

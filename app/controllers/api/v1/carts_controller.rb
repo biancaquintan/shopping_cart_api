@@ -12,6 +12,22 @@ module Api
         ensure_cart_and_add_item
       end
 
+      def remove_item
+        product = find_product
+
+        cart_item = current_cart.cart_items.find_by(product_id: product.id)
+        return render_not_found('Product not found in cart') unless cart_item
+
+        cart_item.destroy!
+        current_cart.recalculate_total_price
+
+        render json: Api::V1::CartSerializer.new(current_cart), status: :ok
+      rescue ActiveRecord::RecordNotFound => e
+        handle_not_found(e)
+      rescue ActiveRecord::RecordInvalid => e
+        handle_invalid_record(e)
+      end
+
       def show
         render json: Api::V1::CartSerializer.new(current_cart), status: :ok
       end
@@ -19,7 +35,7 @@ module Api
       private
 
       def ensure_cart_and_add_item
-        product = Product.find_by!(id: cart_params[:product_id])
+        product = find_product
         quantity = normalized_quantity(cart_params[:quantity])
 
         current_cart.add_product(product.id, quantity)
@@ -38,6 +54,10 @@ module Api
 
       def handle_invalid_record(error)
         render json: { errors: error.record.errors.full_messages }, status: :unprocessable_entity
+      end
+
+      def find_product
+        Product.find_by!(id: cart_params[:product_id])
       end
 
       def current_cart

@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resource :carts, only: %i[create show] do
         post 'add_item', on: :collection
+        delete ':product_id', to: 'carts#remove_item', on: :collection
       end
 
       resource :products
