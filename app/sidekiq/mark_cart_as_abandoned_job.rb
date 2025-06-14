@@ -13,9 +13,7 @@ class MarkCartAsAbandonedJob
   def mark_carts_as_abandoned
     Cart.where(abandoned_at: nil)
         .where('updated_at <= ?', 3.hours.ago)
-        .find_each do |cart|
-          cart.update!(abandoned_at: Time.current)
-        end
+        .find_each(&:mark_as_abandoned)
   end
 
   def delete_old_abandoned_carts

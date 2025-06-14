@@ -20,4 +20,6 @@ FactoryBot.define do
       abandoned_at { Time.current }
     end
   end
+
+  factory :shopping_cart, parent: :cart
 end

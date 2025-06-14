@@ -25,6 +25,18 @@ class Cart < ApplicationRecord
     update!(total_price: total)
   end
 
+  def abandoned?
+    abandoned_at.present?
+  end
+
+  def mark_as_abandoned
+    update!(abandoned_at: Time.current)
+  end
+
+  def remove_if_abandoned
+    destroy! if abandoned_at.present? && abandoned_at >= 7.days.ago.beginning_of_day
+  end
+
   private
 
   def find_or_initialize_item(product)
